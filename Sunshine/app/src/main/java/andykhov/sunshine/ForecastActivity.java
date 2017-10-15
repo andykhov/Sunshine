@@ -18,7 +18,7 @@ public class ForecastActivity extends AppCompatActivity {
     private void addForecastFragment() {
         ForecastFragment forecastFragment = new ForecastFragment();
 
-        //pass Intent's extras if activity started with special instructions
+        // pass Intent's extras if activity started with special instructions
         forecastFragment.setArguments(getIntent().getExtras());
 
         getSupportFragmentManager().beginTransaction().add(R.id.container, forecastFragment);
