@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,11 @@ public class ForecastFragment extends Fragment {
     public ForecastFragment() {}
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
@@ -28,6 +34,7 @@ public class ForecastFragment extends Fragment {
         mForecastLayoutManager = new LinearLayoutManager(getContext());
         mForecastAdapter = new ForecastAdapter(createFillerData(20));
 
+        mForecastRecyclerView.setLayoutManager(mForecastLayoutManager);
         mForecastRecyclerView.setAdapter(mForecastAdapter);
 
         return rootView;
