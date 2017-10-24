@@ -55,7 +55,11 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        if (!hasLocationPermission())
+
+        if (ContextCompat.checkSelfPermission(getContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        else
             requestLocationPermission();
     }
 
@@ -66,18 +70,12 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
         if (requestCode == CHECK_PERMISSION_COARSE_LOCATION) {
             if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-                if (Build.VERSION.SDK_INT >= 23 &&
-                        ContextCompat.checkSelfPermission(getContext(),
-                                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+                if (ContextCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                 mCurrentLocation = LocationServices.FusedLocationApi.
                         getLastLocation(mGoogleApiClient);
             }
         }
-    }
-
-    private boolean hasLocationPermission() {
-        return ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestLocationPermission() {
@@ -103,6 +101,7 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
         }
     }
 
+    //temporary function
     private String[] createFillerData(int size) {
         String[] forecastData = new String[size];
 
