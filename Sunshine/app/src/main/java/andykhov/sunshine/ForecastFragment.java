@@ -13,10 +13,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by Andy on 10/14/17.
@@ -54,13 +64,41 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
     @Override
     public void onStart() {
         super.onStart();
-        mGoogleApiClient.connect();
+        if (!mGoogleApiClient.isConnected())
+            mGoogleApiClient.connect();
+
+        Log.e("onStart", "Here");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("onResume", "here");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e("onPause", "here");
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mGoogleApiClient.disconnect();
+        Log.e("onStop", "Here");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e("onDestroy", "here");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.e("onDetach", "here");
     }
 
     @Override
@@ -71,6 +109,8 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
             mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         else
             requestLocationPermission();
+
+        getForecastJSONData();
     }
 
     @Override
@@ -111,6 +151,41 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
                     .addApi(LocationServices.API)
                     .build();
         }
+    }
+
+    private void getForecastJSONData() {
+        OkHttpClient httpClient = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(buildDarkSkyUrl())
+                .build();
+
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Toast.makeText(getActivity(), "Connection problem", Toast.LENGTH_SHORT);
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected code " + response);
+                } else {
+                    Log.e("response" , response.body().string());
+                    response.body().close();
+                }
+            }
+        });
+    }
+
+    private String buildDarkSkyUrl() {
+        StringBuilder url = new StringBuilder();
+        url.append("https://api.darksky.net/forecast");
+        url.append("/" + BuildConfig.DarkSkyApiKey);
+        url.append("/" + mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude());
+
+        return url.toString();
     }
 
     //temporary function to create filler data in the recycler view
