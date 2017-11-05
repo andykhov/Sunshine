@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,12 +113,12 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
         }
     }
 
-    //temporary function
+    //temporary function to create filler data in the recycler view
     private String[] createFillerData(int size) {
         String[] forecastData = new String[size];
 
         for (int i = 0; i < size; i++) {
-            forecastData[i] = "hot - 95f/85f - Wednesday";
+            forecastData[i] = "filler";
         }
 
         return forecastData;
