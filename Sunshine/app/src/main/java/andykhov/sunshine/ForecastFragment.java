@@ -18,12 +18,13 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -172,7 +173,8 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
                 if (!response.isSuccessful()) {
                     throw new IOException("Unexpected code " + response);
                 } else {
-                    Log.e("response" , response.body().string());
+                    Gson gson = new GsonBuilder().serializeNulls().create();
+                    Forecast forecast = gson.fromJson(response.body().string(), Forecast.class);
                     response.body().close();
                 }
             }
