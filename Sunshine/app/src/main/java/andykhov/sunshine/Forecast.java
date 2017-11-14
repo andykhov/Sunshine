@@ -10,9 +10,5 @@ import com.google.gson.annotations.SerializedName;
 public class Forecast {
     @SerializedName("daily")
     @Expose
-    private DailyForecast dailyForecast;
-
-    public DailyForecast getDailyForecast() {
-        return dailyForecast;
-    }
+    public DailyForecast dailyForecast;
 }

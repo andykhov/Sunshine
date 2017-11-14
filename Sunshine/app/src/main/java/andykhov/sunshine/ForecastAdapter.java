@@ -8,15 +8,17 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+
 /**
  * Created by Andy on 10/14/17.
  */
 
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHolder> {
 
-    private String[] mForecastData;
+    private ArrayList<DailyForecast> mForecastData;
 
-    public ForecastAdapter(String[] forecastData) {
+    public ForecastAdapter(ArrayList<DailyForecast> forecastData) {
         mForecastData = forecastData;
     }
 
@@ -30,12 +32,13 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        viewHolder.mForecastTextView.setText(mForecastData[position]);
+
+        viewHolder.mForecastTextView.setText(mForecastData.get(position).summary);
     }
 
     @Override
     public int getItemCount() {
-        return mForecastData.length;
+        return mForecastData.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

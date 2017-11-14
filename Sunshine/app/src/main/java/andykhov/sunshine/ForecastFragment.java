@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -41,8 +42,8 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
     RecyclerView mForecastRecyclerView;
     RecyclerView.LayoutManager mForecastLayoutManager;
     ForecastAdapter mForecastAdapter;
-    GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation;
+    ArrayList<DailyForecast> mDailyForecast;
 
     public ForecastFragment() {}
 
@@ -57,62 +58,12 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
 
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
         setupRecyclerView(rootView);
-        setupGoogleApiClient();
 
         return rootView;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (!mGoogleApiClient.isConnected())
-            mGoogleApiClient.connect();
-
-        Log.e("onStart", "Here");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.e("onResume", "here");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.e("onPause", "here");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mGoogleApiClient.disconnect();
-        Log.e("onStop", "Here");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.e("onDestroy", "here");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.e("onDetach", "here");
-    }
-
-    @Override
-    public void onConnected(Bundle connectionHint) {
-
-        if (ContextCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        else
-            requestLocationPermission();
-
-        getForecastJSONData();
-    }
+    public void onConnected(Bundle connectionHint) {}
 
     @Override
     public void onConnectionSuspended(int cause) {}
@@ -120,38 +71,12 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
     @Override
     public void onConnectionFailed(ConnectionResult result) {}
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
-        if (requestCode == CHECK_PERMISSION_COARSE_LOCATION) {
-            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(getContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                mCurrentLocation = LocationServices.FusedLocationApi.
-                        getLastLocation(mGoogleApiClient);
-            }
-        }
-    }
-
-    private void requestLocationPermission() {
-        String[] permission = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION};
-        ActivityCompat.requestPermissions(getActivity(), permission, CHECK_PERMISSION_COARSE_LOCATION);
-    }
-
     private void setupRecyclerView(View rootView) {
         mForecastRecyclerView = (RecyclerView) rootView.findViewById(R.id.forecast_list);
         mForecastLayoutManager = new LinearLayoutManager(getContext());
-        mForecastAdapter = new ForecastAdapter(createFillerData(50));
+        mForecastAdapter = new ForecastAdapter(mDailyForecast);
         mForecastRecyclerView.setLayoutManager(mForecastLayoutManager);
         mForecastRecyclerView.setAdapter(mForecastAdapter);
-    }
-
-    private void setupGoogleApiClient() {
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                    .addConnectionCallbacks(this)
-                    .addApi(LocationServices.API)
-                    .build();
-        }
     }
 
     private void getForecastJSONData() {
@@ -174,7 +99,7 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
                     throw new IOException("Unexpected code " + response);
                 } else {
                     Gson gson = new GsonBuilder().serializeNulls().create();
-                    Forecast forecast = gson.fromJson(response.body().string(), Forecast.class);
+                    Forecast forecastData = gson.fromJson(response.body().string(), Forecast.class);
                     response.body().close();
                 }
             }

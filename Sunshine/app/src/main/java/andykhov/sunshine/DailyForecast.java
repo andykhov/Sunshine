@@ -12,60 +12,9 @@ import java.util.ArrayList;
 public class DailyForecast {
     @SerializedName("summary")
     @Expose
-    private String summary;
+    public String summary;
 
     @SerializedName("data")
     @Expose
-    private ArrayList<DayForecast> dayForecastData;
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public DayForecast getDayForecast(int index) {
-        return dayForecastData.get(index);
-    }
-
-    public class DayForecast {
-        @SerializedName("summary")
-        @Expose
-        private String summary;
-
-        @SerializedName("icon")
-        @Expose
-        private String icon;
-
-        @SerializedName("time")
-        @Expose
-        private int time;
-
-        @SerializedName("temperatureHigh")
-        @Expose
-        private double tempHigh;
-
-        @SerializedName("temperatureLow")
-        @Expose
-        private double tempLow;
-
-        public String getSummary() {
-            return summary;
-        }
-
-        public String getIcon() {
-            return icon;
-        }
-
-        public int getTime() {
-            return time;
-        }
-
-        public double getTempHigh() {
-            return tempHigh;
-        }
-
-        public double getTempLow() {
-            return tempLow;
-        }
-    }
-
+    public ArrayList<Day> dayList;
 }
