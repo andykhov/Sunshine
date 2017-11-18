@@ -10,10 +10,6 @@ import java.util.ArrayList;
  */
 
 public class DailyForecast {
-    @SerializedName("summary")
-    @Expose
-    public String summary;
-
     @SerializedName("data")
     @Expose
     public ArrayList<Day> dayList;

@@ -1,12 +1,9 @@
 package andykhov.sunshine;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -16,10 +13,10 @@ import java.util.ArrayList;
 
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHolder> {
 
-    private ArrayList<DailyForecast> mForecastData;
+    private ArrayList<Day> mDays;
 
-    public ForecastAdapter(ArrayList<DailyForecast> forecastData) {
-        mForecastData = forecastData;
+    public ForecastAdapter(ArrayList<Day> days) {
+        mDays = days;
     }
 
     @Override
@@ -33,12 +30,12 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
 
-        viewHolder.mForecastTextView.setText(mForecastData.get(position).summary);
+        viewHolder.mForecastTextView.setText(mDays.get(position).summary);
     }
 
     @Override
     public int getItemCount() {
-        return mForecastData.size();
+        return mDays.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

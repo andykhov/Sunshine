@@ -1,15 +1,10 @@
 package andykhov.sunshine;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +12,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -43,7 +37,7 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
     RecyclerView.LayoutManager mForecastLayoutManager;
     ForecastAdapter mForecastAdapter;
     Location mCurrentLocation;
-    ArrayList<DailyForecast> mDailyForecast;
+    ArrayList<Day> mDays;
 
     public ForecastFragment() {}
 
@@ -74,7 +68,7 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
     private void setupRecyclerView(View rootView) {
         mForecastRecyclerView = (RecyclerView) rootView.findViewById(R.id.forecast_list);
         mForecastLayoutManager = new LinearLayoutManager(getContext());
-        mForecastAdapter = new ForecastAdapter(mDailyForecast);
+        mForecastAdapter = new ForecastAdapter(mDays);
         mForecastRecyclerView.setLayoutManager(mForecastLayoutManager);
         mForecastRecyclerView.setAdapter(mForecastAdapter);
     }
@@ -113,16 +107,5 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
         url.append("/" + mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude());
 
         return url.toString();
-    }
-
-    //temporary function to create filler data in the recycler view
-    private String[] createFillerData(int size) {
-        String[] forecastData = new String[size];
-
-        for (int i = 0; i < size; i++) {
-            forecastData[i] = "filler";
-        }
-
-        return forecastData;
     }
 }
