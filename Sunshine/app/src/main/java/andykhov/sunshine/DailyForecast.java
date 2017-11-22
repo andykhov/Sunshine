@@ -12,5 +12,5 @@ import java.util.ArrayList;
 public class DailyForecast {
     @SerializedName("data")
     @Expose
-    public ArrayList<Day> dayList;
+    public ArrayList<Day> days;
 }

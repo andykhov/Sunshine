@@ -38,6 +38,18 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         return mDays.size();
     }
 
+    public void setNewForecast(List<Day> days) {
+        for (int i = 0; i < mDays.size(); i++) {
+            mDays.remove(i);
+            this.notifyItemRemoved(i);
+        }
+
+        for (int i = 0; i < days.size(); i++) {
+            mDays.add(days.get(i));
+            this.notifyItemInserted(i);
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mForecastTextView;

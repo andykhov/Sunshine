@@ -101,7 +101,8 @@ public class ForecastFragment extends Fragment {
                     throw new IOException("Unexpected code " + response);
                 } else {
                     Gson gson = new GsonBuilder().serializeNulls().create();
-                    Forecast forecastData = gson.fromJson(response.body().string(), Forecast.class);
+                    Forecast forecast = gson.fromJson(response.body().string(), Forecast.class);
+                    mForecastAdapter.setNewForecast(forecast.dailyForecast.days);
                     response.body().close();
                 }
             }
