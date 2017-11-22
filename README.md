@@ -5,3 +5,4 @@ This is my weather android application. Created to learn about Android developme
 ## Using
 * Dark Sky Weather API
 * okHttp + GSON (will probably implement Retrofit later on)
+* Google Play Location Services
