@@ -27,4 +27,11 @@ public class Day {
     @SerializedName("temperatureLow")
     @Expose
     public double tempLow;
+
+    public Day(String summary, String icon, int time, double tempHigh, double tempLow) {
+        this.summary = summary;
+        this.icon = icon;
+        this.tempHigh = tempHigh;
+        this.tempLow = tempLow;
+    }
 }

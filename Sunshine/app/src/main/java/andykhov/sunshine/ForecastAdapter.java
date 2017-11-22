@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Andy on 10/14/17.
@@ -13,9 +14,9 @@ import java.util.ArrayList;
 
 public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHolder> {
 
-    private ArrayList<Day> mDays;
+    private List<Day> mDays;
 
-    public ForecastAdapter(ArrayList<Day> days) {
+    public ForecastAdapter(List<Day> days) {
         mDays = days;
     }
 
@@ -29,7 +30,6 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-
         viewHolder.mForecastTextView.setText(mDays.get(position).summary);
     }
 

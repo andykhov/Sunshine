@@ -1,17 +1,21 @@
 package andykhov.sunshine;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -28,16 +32,14 @@ import okhttp3.Response;
  * Created by Andy on 10/14/17.
  */
 
-public class ForecastFragment extends Fragment implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+public class ForecastFragment extends Fragment {
 
-    private final int CHECK_PERMISSION_COARSE_LOCATION = 1;
+    private final int CHECK_PERMISSION_FINE_LOCATION = 1;
 
-    RecyclerView mForecastRecyclerView;
-    RecyclerView.LayoutManager mForecastLayoutManager;
-    ForecastAdapter mForecastAdapter;
-    Location mCurrentLocation;
-    ArrayList<Day> mDays;
+    private RecyclerView mForecastRecyclerView;
+    private RecyclerView.LayoutManager mForecastLayoutManager;
+    private ForecastAdapter mForecastAdapter;
+    private ArrayList<Day> mDays;
 
     public ForecastFragment() {}
 
@@ -51,19 +53,25 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
+        mDays = createFillerData();
         setupRecyclerView(rootView);
-
         return rootView;
     }
 
     @Override
-    public void onConnected(Bundle connectionHint) {}
+    public void onRequestPermissionsResult(
+            int resultCode, String[] permissions, int[] grantResults) {
 
-    @Override
-    public void onConnectionSuspended(int cause) {}
+        if (resultCode == CHECK_PERMISSION_FINE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                updateCurrentLocation();
+            }
+        }
+    }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult result) {}
+    private void onLocationUpdated(Location location) {
+        updateForecast(location);
+    }
 
     private void setupRecyclerView(View rootView) {
         mForecastRecyclerView = (RecyclerView) rootView.findViewById(R.id.forecast_list);
@@ -73,11 +81,11 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
         mForecastRecyclerView.setAdapter(mForecastAdapter);
     }
 
-    private void getForecastJSONData() {
+    private void updateForecast(Location location) {
         OkHttpClient httpClient = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url(buildDarkSkyUrl())
+                .url(buildDarkSkyUrl(location))
                 .build();
 
         httpClient.newCall(request).enqueue(new Callback() {
@@ -100,12 +108,41 @@ public class ForecastFragment extends Fragment implements GoogleApiClient.Connec
         });
     }
 
-    private String buildDarkSkyUrl() {
+    private void updateCurrentLocation() {
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    CHECK_PERMISSION_FINE_LOCATION);
+        } else {
+            LocationServices.getFusedLocationProviderClient(getActivity()).getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                onLocationUpdated(location);
+                            }
+                        }
+                    });
+        }
+    }
+
+    private String buildDarkSkyUrl(Location location) {
         StringBuilder url = new StringBuilder();
         url.append("https://api.darksky.net/forecast");
         url.append("/" + BuildConfig.DarkSkyApiKey);
-        url.append("/" + mCurrentLocation.getLatitude() + "," + mCurrentLocation.getLongitude());
+        url.append("/" + location.getLatitude() + "," + location.getLongitude());
 
         return url.toString();
+    }
+
+    private ArrayList<Day> createFillerData() {
+        ArrayList<Day> days = new ArrayList<>();
+
+        for (int i = 0; i < 7; i++) {
+            days.add(new Day("empty", "empty", 0, 0, 0));
+        }
+
+        return days;
     }
 }
