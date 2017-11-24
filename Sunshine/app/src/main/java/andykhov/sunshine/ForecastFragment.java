@@ -50,6 +50,7 @@ public class ForecastFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_forecast, container, false);
         mDays = createFillerData();
         setupRecyclerView(rootView);
+        updateCurrentLocation();
         return rootView;
     }
 
@@ -96,8 +97,13 @@ public class ForecastFragment extends Fragment {
                     throw new IOException("Unexpected code " + response);
                 } else {
                     Gson gson = new GsonBuilder().serializeNulls().create();
-                    Forecast forecast = gson.fromJson(response.body().string(), Forecast.class);
-                    mForecastAdapter.setNewForecast(forecast.dailyForecast.days);
+                    final Forecast forecast = gson.fromJson(response.body().string(), Forecast.class);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mForecastAdapter.setNewForecast(forecast.dailyForecast.days);
+                        }
+                    });
                     response.body().close();
                 }
             }
@@ -135,7 +141,7 @@ public class ForecastFragment extends Fragment {
     private ArrayList<Day> createFillerData() {
         ArrayList<Day> days = new ArrayList<>();
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 8; i++) {
             days.add(new Day("empty", "empty", 0, 0, 0));
         }
 
