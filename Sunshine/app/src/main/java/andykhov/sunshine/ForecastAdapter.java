@@ -1,12 +1,11 @@
 package andykhov.sunshine;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,15 +22,17 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
 
     @Override
     public ForecastAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        TextView textView = (TextView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.view_forecast, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.view_day, parent, false);
 
-        return new ViewHolder(textView);
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        viewHolder.mForecastTextView.setText(mDays.get(position).summary);
+        viewHolder.mTempHighView.setText(Double.toString(mDays.get(position).tempHigh));
+        viewHolder.mTempLowView.setText(Double.toString(mDays.get(position).tempLow));
+        viewHolder.mSummary.setText(mDays.get(position).summary);
     }
 
     @Override
@@ -46,13 +47,17 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         }
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    protected static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView mForecastTextView;
+        protected TextView mTempHighView;
+        protected TextView mTempLowView;
+        protected TextView mSummary;
 
-        public ViewHolder(TextView v) {
+        public ViewHolder(View v) {
             super(v);
-            mForecastTextView = (TextView) itemView.findViewById(R.id.forecast_text_view);
+            mTempHighView = (TextView) v.findViewById(R.id.tempHigh);
+            mTempLowView = (TextView) v.findViewById(R.id.tempLow);
+            mSummary = (TextView) v.findViewById(R.id.summary);
         }
     }
 
