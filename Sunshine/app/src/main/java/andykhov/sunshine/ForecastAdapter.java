@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,6 +35,10 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         viewHolder.mTempHighView.setText(Double.toString(mDays.get(position).tempHigh));
         viewHolder.mTempLowView.setText(Double.toString(mDays.get(position).tempLow));
         viewHolder.mSummary.setText(mDays.get(position).summary);
+        if (position == 0)
+            viewHolder.mDayOfWeek.setText(R.string.defaultDay);
+        else
+            viewHolder.mDayOfWeek.setText(getDayOfWeek(mDays.get(position).time));
     }
 
     @Override
@@ -47,17 +53,25 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         }
     }
 
+    private String getDayOfWeek(int time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        Date dateFormat = new Date(time * 1000);
+        return sdf.format(dateFormat);
+    }
+
     protected static class ViewHolder extends RecyclerView.ViewHolder {
 
         protected TextView mTempHighView;
         protected TextView mTempLowView;
         protected TextView mSummary;
+        protected TextView mDayOfWeek;
 
         public ViewHolder(View v) {
             super(v);
             mTempHighView = (TextView) v.findViewById(R.id.tempHigh);
             mTempLowView = (TextView) v.findViewById(R.id.tempLow);
             mSummary = (TextView) v.findViewById(R.id.summary);
+            mDayOfWeek = (TextView) v.findViewById(R.id.dayOfWeek);
         }
     }
 
