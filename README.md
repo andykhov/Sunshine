@@ -1,6 +1,6 @@
-# Sunshine (working title) In progress
+# Sunshine
 
-This is my weather android application. Created to learn about Android development. This app is nothing special
+This is my weather android application. Created to learn about Android development. This app is nothing special.
 
 ## Using
 * Dark Sky Weather API
